@@ -469,14 +469,14 @@ float: none;
 	color: #AEAEAE;
 	font-size: 16px;
 }
-#aboutUs{
+#aboutMe{
 padding:60px 0;	
 	}
-#aboutUs .txtHead {
+#aboutMe .txtHead {
 	background: #fff;
 	padding: 20px 10px;
 }
-#aboutUs .txtHead .fa {
+#aboutMe .txtHead .fa {
 	font-size: 58px;
 	color: #5E5E5E;
 }

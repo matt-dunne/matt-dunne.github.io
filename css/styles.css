@@ -483,7 +483,11 @@ padding:60px 0;
 .tileBox img{
 overflow:hidden;
 border-radius:120px;
-width:300px;
+/*width:300px;*/
+width: 100%;
+height: auto;
+object-fit: contain;
+display: block;
 box-shadow: 12px 0px 0px 12px rgba(13, 113, 165, 0.2), -12px 0px 0px 12px rgba(109, 139, 232, 0.2);
 }
 .tileBox p { 

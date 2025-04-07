@@ -481,11 +481,11 @@ padding:60px 0;
 	color: #5E5E5E;
 }
 .tileBox img{
-overflow: visible !important;
+overflow: hidden;
 border-radius:120px;
 /*width:300px;*/
 width: 100%;
-height: auto;
+max-height: 100%;
 object-fit: contain;
 display: block;
 box-shadow: 12px 0px 0px 12px rgba(13, 113, 165, 0.2), -12px 0px 0px 12px rgba(109, 139, 232, 0.2);

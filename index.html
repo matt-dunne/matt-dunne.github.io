@@ -30,18 +30,64 @@
 
 <!-- Font Awesome -->
 <link href="css/font-awesome.min.css" rel="stylesheet">
+
 <style>
-    .email a {
-      text-align: center;
-      color: #fff;
-      text-decoration: underline;
-      margin-top: 2.5em;
-    }
-    .email {
+  body {
+    margin: 0;
+    padding: 0;
+    background: url('images/JP2_16.9_2.jpg') no-repeat center center fixed;
+    background-size: cover;
+    font-family: Arial, sans-serif;
+    color: #fff;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    padding: 1em;
+    box-sizing: border-box;
+    backdrop-filter: brightness(0.8);
+  }
+
+  h1 {
+    font-size: 2.5em;
+    margin: 0.3em 0;
+    word-wrap: break-word;
+  }
+
+  p {
+    font-size: 1.2em;
+    max-width: 600px;
+    margin: 0.5em auto;
+    word-wrap: break-word;
+  }
+
+  .email {
     text-align: center;
     margin-top: 2.5em;
+    font-size: 1.1em;
+    word-wrap: break-word;
+  }
+
+  .email a {
+    color: #fff;
+    text-decoration: underline;
+    word-break: break-all;
+  }
+
+  @media (max-width: 600px) {
+    h1 {
+      font-size: 1.8em;
+    }
+
+    p, .email {
+      font-size: 1em;
+      padding: 0 1em;
+    }
   }
 </style>
+
 </head>
 
 <body>

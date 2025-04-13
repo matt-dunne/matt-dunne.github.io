@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Vaccine Scripts</title>
+    <!-- Include Highlight.js CSS with Solarized Light theme -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/atom-one-light.min.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="icon" href="favicon_brain.png" type="image/png">
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+        background: #f6f8fa;
+      }
+      h1 {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+      /* Container for the two columns */
+      .container {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      /* Each column takes up roughly half the available width */
+      .column {
+        flex: 1 1 45%;
+        min-width: 300px;
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+      }
+      h2 {
+        text-align: center;
+        margin-bottom: 15px;
+      }
+      pre {
+        padding: 15px;
+        border-radius: 5px;
+        overflow-x: auto;
+      }
+      code {
+        font-family: Consolas, Monaco, "Andale Mono", "Ubuntu Mono", monospace;
+        font-size: 0.9em;
+      }
+    </style>
+  </head>
+  <body>
+        <!-- Navbar -->
+        <header class="header" style="position: fixed; top: 0; width: 100%; z-index: 999; background: #000;">
+            <div class="container">
+              <nav class="navbar navbar-inverse" role="navigation">
+                <div class="navbar-header">
+                  <button type="button" id="nav-toggle" class="navbar-toggle" data-toggle="collapse" data-target="#main-nav"> 
+                    <span class="sr-only">Toggle navigation</span> 
+                    <span class="icon-bar"></span> 
+                    <span class="icon-bar"></span> 
+                    <span class="icon-bar"></span> 
+                  </button>
+                </div>
+                <div id="main-nav" class="collapse navbar-collapse">
+                  <ul class="nav navbar-nav" id="mainNav">
+                    <li><a href="index.html#home" class="scroll-link">Home</a></li>
+                    <li><a href="index.html#aboutMe" class="scroll-link">About Me</a></li>
+                    <li><a href="index.html#skills" class="scroll-link">Skills</a></li>
+                    <li><a href="index.html#experience" class="scroll-link">Experience</a></li>
+                    <li><a href="index.html#projects" class="scroll-link">Projects</a></li>
+                    <li><a href="index.html#contactMe" class="scroll-link">Contact Me</a></li>
+                  </ul>
+                </div>
+              </nav>
+            </div>
+          </header>
+    <h1 style="margin-top: 100px;">Vaccine Scripts</h1>
+    <p style="text-align: center; max-width: 800px; margin: 0 auto; margin-bottom: 20px;">
+        This page displays the two main scripts used for vaccine appointment monitoring and notification.
+        The left column handles appointment checking and email notifications, while the right column
+        manages Spotify playback to alert you when appointments become available. <br/><br/>In addition to the Python scripts
+         that monitor vaccine appointments and trigger alerts, a batch (.bat) script is used to run the vaccine hunter
+          script automatically at regular intervals. This batch file schedules the execution every X minutes 
+          (via Windows Task Scheduler), ensuring continuous monitoring without manual intervention.
+           This setup allows the script to check for vaccine availability and trigger notifications as soon as appointments become available.
+      </p>
+    <div class="container">
+      <!-- Column 1: Walgreens Vaccine Hunter Script -->
+      <div class="column">
+        <h2>Walgreens Vaccine Hunter</h2>
+        <pre><code class="python">
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Script to automatically sign up for a Walgreens vaccine appointment.
+This script uses Selenium for web automation, checks for appointment
+availability, and sends email notifications/plays a Spotify alarm when an appointment is available.
+If an error occurs, an error notification email is sent.
+
+Authors: Matthew Dunne, PhD
+Date: 3/20/21
+"""
+
+# ----- Import Required Libraries -----
+from selenium import webdriver
+from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.support.ui import Select
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.action_chains import ActionChains
+import time
+import smtplib, ssl
+import datetime
+from spotify_alarm import open_spotify
+
+# ----- Email Notification Setup -----
+port = 465  # For SSL
+smtp_server = "smtp.gmail.com"
+sender_email = "sender@gmail.com"       # Replace with your sender email
+receiver_email = "receiver@gmail.com"     # Replace with primary recipient email
+receiver_email2 = "receiver2@gmail.com"   # Replace with secondary recipient email if desired
+password = "password"                     # Replace with your email password
+message = """\
+Subject: Vaccine Appointment Available!
+
+Go to https://www.walgreens.com/findcare/vaccination/covid-19?ban=covid_vaccine_landing_schedule."""
+message_error = """\
+Subject: Vaccine Hunter ERROR!
+
+Walgreens script has stopped working"""
+context = ssl.create_default_context()
+
+# ----- Selenium WebDriver Setup -----
+chromedriver = "C:/Users/users/Downloads/chromedriver_win32/chromedriver"  <!-- Update path as needed -->
+driver = webdriver.Chrome(chromedriver)
+
+# ----- Navigate to Walgreens Vaccine Scheduling Page -----
+driver.get('https://www.walgreens.com/findcare/vaccination/covid-19?ban=covid_vaccine_landing_schedule')
+schedule_button = '//*[@id="userOptionButtons"]/a'
+driver.find_element_by_xpath(schedule_button).click()
+time.sleep(2)
+
+# ----- Enter Zip Code Information -----
+zip_code = '//*[@id="inputLocation"]'
+driver.find_element_by_xpath(zip_code).click()
+actions = ActionChains(driver)
+# Clear existing value and enter zipcode '90210'
+actions.send_keys(Keys.BACKSPACE, Keys.BACKSPACE, Keys.BACKSPACE, Keys.BACKSPACE, Keys.BACKSPACE, '90210')
+actions.perform()
+
+# ----- Define XPaths for Search Button and No Appointment Alert -----
+search = '//*[@id="wag-body-main-container"]/section/section/section/section/section[2]/div/span/button'
+no_appointments = 'alert.alert__red.mt25'
+
+# ----- Define the Function to Perform the Search and Notification -----
+def search_function():
+    """
+    Click the search button, wait for results, then:
+      - If no appointments available, log progress, wait 15 seconds and refresh the page.
+      - If appointments are available, send a notification email and play a Spotify alarm.
+      - If any other error occurs, send an error email and log the failure.
+    """
+    driver.find_element_by_xpath(search).click()
+    time.sleep(2)
+    try:
+        driver.find_element_by_class_name(no_appointments)
+        time.sleep(15)
+        driver.refresh()
+        with open("C:/Users/user/Documents/vaccine_hunter_example.txt", mode='a') as file:
+            file.write('Still working at %s.\n' % (datetime.datetime.now()))
+    except NoSuchElementException:
+        with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
+            server.login(sender_email, password)
+            server.sendmail(sender_email, receiver_email, message)
+            open_spotify()
+            # Uncomment next line to notify a second recipient
+            # server.sendmail(sender_email, receiver_email2, message)
+            time.sleep(1200)
+    except:
+        with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
+            server.login(sender_email, password)
+            server.sendmail(sender_email, receiver_email, message_error)
+        with open("C:/Users/user/Documents/vaccine_hunter_example.txt", mode='a') as file:
+            file.write('Failed working at %s.\n' % (datetime.datetime.now()))
+
+searching = True
+while searching:
+    search_function()
+        </code></pre>
+      </div>
+
+      <!-- Column 2: Spotify Alarm Script -->
+      <div class="column">
+        <h2>Spotify Alarm</h2>
+        <pre><code class="python">
+#!/usr/bin/env python3
+"""
+Spotify Alarm Script
+
+This script opens the Spotify web player, logs in using provided credentials,
+closes the cookie consent pop-up (if present), and then starts playing music.
+This is used to trigger an alarm when a vaccine appointment is available.
+"""
+
+# ----- Import Required Modules -----
+from selenium import webdriver
+from selenium.common.exceptions import NoSuchElementException, ElementClickInterceptedException
+from selenium.webdriver.support.ui import Select
+from selenium.webdriver.common.keys import Keys
+import time
+from selenium.webdriver.common.action_chains import ActionChains
+
+def open_spotify():
+    """
+    Opens the Spotify web player, logs in, and initiates music playback.
+    """
+    # ----- Setup Chrome WebDriver -----
+    chromedriver = "C:/Users/users/Downloads/chromedriver_win32/chromedriver"  <!-- Update path as needed -->
+    driver = webdriver.Chrome(chromedriver)
+
+    # ----- Navigate to Spotify Web Player -----
+    driver.get('https://open.spotify.com/')
+    time.sleep(2)
+
+    # ----- Click the Login Button -----
+    login_xpath = '//*[@id="main"]/div/div[2]/div[1]/header/div[5]/button[2]'
+    driver.find_element_by_xpath(login_xpath).click()
+    time.sleep(2)
+
+    # ----- Enter Login Credentials -----
+    actions = ActionChains(driver)
+    actions.send_keys('username')  # Replace with your Spotify username.
+    actions.perform()
+
+    actions = ActionChains(driver)
+    actions.send_keys(Keys.TAB)
+    actions.perform()
+
+    actions = ActionChains(driver)
+    actions.send_keys('password')  # Replace with your Spotify password.
+    actions.perform()
+
+    actions = ActionChains(driver)
+    actions.send_keys(Keys.RETURN)
+    actions.perform()
+
+    # ----- Wait for Login Process to Complete -----
+    time.sleep(10)
+
+    # ----- Close Cookie Consent Dialog (if Present) -----
+    cookies_exit_xpath = '//*[@id="onetrust-close-btn-container"]/button'
+    try:
+        driver.find_element_by_xpath(cookies_exit_xpath).click()
+    except NoSuchElementException:
+        pass
+    time.sleep(2)
+
+    # ----- Initiate Music Playback -----
+    play_button_xpath = '//*[@id="main"]/div/div[2]/div[2]/footer/div/div[2]/div/div[1]/button[3]'
+    driver.find_element_by_xpath(play_button_xpath).click()
+
+    # ----- Wait to Let Music Play -----
+    time.sleep(30)
+        </code></pre>
+      </div>
+    </div>
+  <!-- Optional: Footer or Back to Projects button -->
+  <div style="text-align: center; margin-top: 40px;">
+    <a href="index.html#projects" class="btn btn-dark" style="padding: 10px 20px; font-size: 16px; margin-bottom: 20px;">
+      ← Back to Projects
+    </a>
+  </div>
+    <!-- Include Highlight.js Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script>
+      // Initialize syntax highlighting on all code blocks
+      hljs.highlightAll();
+    </script>
+  </body>
+</html>

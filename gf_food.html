@@ -1,0 +1,135 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Gluten-Free Food Gallery</title>
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/fancybox/jquery.fancybox.css">
+  <link rel="icon" href="favicon_brain.png" type="image/png">
+
+  <style>
+.carousel-container {
+  max-width: 800px;
+  margin: 50px auto;
+  text-align: center;
+}
+
+.carousel-container img {
+  width: 100%;
+  max-height: 500px;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto;
+}
+
+.carousel-description {
+  margin-top: 20px;
+  font-size: 18px;
+  color: #333;
+  text-align: center;
+  position: static;  /* override any global rules */
+}
+.carousel-controls {
+  margin-top: 15px;
+}
+
+.carousel-controls button {
+  margin: 0 10px;
+  padding: 8px 16px;
+  font-size: 16px;
+}
+  </style>
+</head>
+<body>
+    <!-- Background Image -->
+    <!--<div class="banner-container">
+      <img src="images/JP2_16.9_2.jpg" alt="Background" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1;">
+    </div>-->
+  
+    <!-- Navbar -->
+  <header class="header" style="position: fixed; top: 0; width: 100%; z-index: 999; background: #000;">
+    <div class="container">
+      <nav class="navbar navbar-inverse" role="navigation">
+        <div class="navbar-header">
+          <button type="button" id="nav-toggle" class="navbar-toggle" data-toggle="collapse" data-target="#main-nav"> 
+            <span class="sr-only">Toggle navigation</span> 
+            <span class="icon-bar"></span> 
+            <span class="icon-bar"></span> 
+            <span class="icon-bar"></span> 
+          </button>
+        </div>
+        <div id="main-nav" class="collapse navbar-collapse">
+          <ul class="nav navbar-nav" id="mainNav">
+            <li><a href="index.html#home" class="scroll-link">Home</a></li>
+            <li><a href="index.html#aboutMe" class="scroll-link">About Me</a></li>
+            <li><a href="index.html#skills" class="scroll-link">Skills</a></li>
+            <li><a href="index.html#experience" class="scroll-link">Experience</a></li>
+            <li><a href="index.html#projects" class="scroll-link">Projects</a></li>
+            <li><a href="index.html#contactMe" class="scroll-link">Contact Me</a></li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+  </header>
+  <div class="container">
+    <h1 class="text-center" style="margin-top: 100px;">Gluten-Free Baking (and cooking!)</h1>
+    <p class="text-center">
+      While I am not gluten intolerant, my partner is. Early on in dating, she mentioned missing croissants more than anything else, and I made it my mission to recreate them
+      for our first Valentine’s Day together. I quickly realized I’d taken on one of the most technically demanding bakes — one that even professional chefs struggle with.
+      So I studied the science behind gluten-free baking (shoutout to PhD chemist/baker the <a href="https://theloopywhisk.com/" target="_blank" rel="noopener noreferrer">Loopy Whisk</a>),
+       embraced my inner scientist, and learned to troubleshoot, iterate, and perfect recipes. What started as a single challenge turned into a full-blown side passion!
+      </p>
+  </div>
+  <!--Image Carousel-->
+  <div class="carousel-container">
+    <img id="carouselImage" src="images/gf_food/IMG_1758.JPEG" alt="Gluten-Free Food" style="margin-top: 10px;">
+    <div class="carousel-description" id="carouselCaption">My pride and joy. Gluten-free croissants which took a LOT of trial and error. My pro tip is to laminate your dough on a frozen cookie sheet to keep the butter from melting!.</div>
+    <div class="carousel-controls">
+      <button onclick="changeImage(-1)">Previous</button>
+      <button onclick="changeImage(1)">Next</button>
+    </div>
+  </div>
+  <div style="text-align: center; margin-top: 40px; margin-bottom: 100px;">
+    <a href="index.html#projects" class="btn btn-dark" style="padding: 10px 20px; font-size: 16px;">
+      ← Back to Projects
+    </a>
+  </div>
+
+  <script>
+    const images = [
+    { src: "images/gf_food/IMG_1758.JPEG", caption: "My pride and joy. Gluten-free croissants which took a LOT of trial and error. My pro tip is to laminate your dough on a frozen cookie sheet to keep the butter from melting!" },
+    { src: "images/gf_food/IMG_1760.JPEG", caption: "Pain au chocolat! Definitely a bit of a <i>pain</i> to make but oh so worth it." },
+    { src: "images/gf_food/IMG_4328.JPEG", caption: "Buckwheat crepes - aka Galettes - stuffed with Nutella and sprinkled with powdered sugar." },
+    { src: "images/gf_food/IMG_4721.JPEG", caption: "First ever eggs benedict with avocado and prosciutto on a gf english muffin." },
+    { src: "images/gf_food/IMG_4750.JPEG", caption: "Simple fish tacos on homemade corn tortillas." },
+    { src: "images/gf_food/IMG_4840.JPEG", caption: "One of my first forays into gluten-free bread baking - a baguette!" },
+    { src: "images/gf_food/IMG_4860.JPEG", caption: "A classic - gf chocolate chip cookies." },
+    { src: "images/gf_food/IMG_4870.JPEG", caption: "One of my favorite brunch meals - brunch fried rice made with tamari instead of soy sauce." },
+    { src: "images/gf_food/IMG_4875.JPEG", caption: "Some more fish tacos and homemade corn tortillas." },
+    { src: "images/gf_food/IMG_4896.JPEG", caption: "Bucatini carbonara with Banza chickpea pasta. My first time making possibly my favorite pasta dish - carbonara!" },
+    { src: "images/gf_food/IMG_5279.JPEG", caption: "Chocolate chip cookie bars! Like a cross between a cookie and a blondie." },
+    { src: "images/gf_food/IMG_5657.JPEG", caption: "My first gf muffins - blueberry!" },
+    { src: "images/gf_food/IMG_5809.JPEG", caption: "Another gf bread - this time a garlic focaccia." },
+    { src: "images/gf_food/IMG_5828.JPEG", caption: "Courgette and feta muffins - not my favorite but a fun recipe to try!" },
+    { src: "images/gf_food/IMG_5878.JPEG", caption: "Pão de queijo - Brazilian cheese bread. Naturally gluten free as it's made with tapioca starch. Sooo gooey and good!" },
+    { src: "images/gf_food/IMG_5879.JPEG", caption: "Gluten-free beer battered fish! I'd been wanting to make a gluten-free beer batter for a while." },
+    { src: "images/gf_food/IMG_5886.JPEG", caption: "Brown butter banana walnut muffins. A bit of a mouthful to say and also a delicious mouthful!" },
+    { src: "images/gf_food/IMG_5904.JPEG", caption: "Tom kha soup! One of my partners favorite soups that I made when she was sick." },
+    { src: "images/gf_food/IMG_5930.JPEG", caption: "One of many eggs benny, this time with pork belly." },
+    { src: "images/gf_food/IMG_6588.JPEG", caption: "GF beer battered shrimp ready for tacos!" },
+    { src: "images/gf_food/IMG_6589.JPEG", caption: "Had some leftover gf beer batter and an onion sitting around so.... onion rings!" },
+    { src: "images/gf_food/IMG_6754.JPEG", caption: "One of my personal favorite dishes - Khao Soi, a northern Thai curry noodle soup. It's under all the toppings and garnish I promise!" },
+    { src: "images/gf_food/IMG_6762.JPEG", caption: "Chocolate crepe cake with a chocolate, macademia nut ganache in between all 14(!) layers." },
+    ];
+    let current = 0;
+
+    function changeImage(step) {
+      current = (current + step + images.length) % images.length;
+      document.getElementById("carouselImage").src = images[current].src;
+      document.getElementById("carouselCaption").innerHTML = images[current].caption;
+    }
+  </script>
+</body>
+</html>

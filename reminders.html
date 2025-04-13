@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Reminder Scripts</title>
+    <!-- Include Highlight.js CSS (Atom One Light theme) from CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/atom-one-light.min.css">
+    <!-- Optional: Bootstrap and custom styles -->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="icon" href="favicon_brain.png" type="image/png">
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+        padding: 0;
+        background: #f6f8fa;
+        line-height: 1.6;
+      }
+      h1 {
+        text-align: center;
+      }
+      /* Carousel container styling */
+      .carousel {
+        position: relative;
+        overflow: hidden;
+        width: 100%;
+        max-width: 1200px;
+        margin: 20px auto;
+        background: #fff;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+        border-radius: 8px;
+      }
+      .carousel-track {
+        display: flex;
+        transition: transform 0.5s ease-in-out;
+      }
+      .carousel-slide {
+        min-width: 100%;
+        box-sizing: border-box;
+        padding: 20px;
+      }
+      /* Layout for script pair inside each slide */
+      .code-pair {
+        display: flex;
+        gap: 20px;
+      }
+      .code-column {
+        flex: 1;
+        min-width: 300px;
+      }
+      pre {
+        margin: 0;
+        padding: 15px;
+        border-radius: 5px;
+        overflow-x: auto;
+      }
+      code {
+        font-family: Consolas, Monaco, "Andale Mono", "Ubuntu Mono", monospace;
+        font-size: 0.9em;
+      }
+      /* Navigation container outside the carousel */
+      .carousel-nav {
+        text-align: center;
+        margin-bottom: 10px;
+      }
+      .carousel-nav button {
+        margin: 0 10px;
+        padding: 10px 15px;
+        font-size: 1.5em;
+        cursor: pointer;
+        background: #fff;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+      h2, h3 {
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+
+    <!-- Navbar (optional) -->
+    <header class="header" style="position: fixed; top: 0; width: 100%; z-index: 999; background: #000;">
+      <div class="container">
+        <nav class="navbar navbar-inverse" role="navigation">
+          <div class="navbar-header">
+            <button type="button" id="nav-toggle" class="navbar-toggle" data-toggle="collapse" data-target="#main-nav"> 
+              <span class="sr-only">Toggle navigation</span> 
+              <span class="icon-bar"></span> 
+              <span class="icon-bar"></span> 
+              <span class="icon-bar"></span> 
+            </button>
+          </div>
+          <div id="main-nav" class="collapse navbar-collapse">
+            <ul class="nav navbar-nav" id="mainNav">
+              <li><a href="index.html#home" class="scroll-link">Home</a></li>
+              <li><a href="index.html#aboutMe" class="scroll-link">About Me</a></li>
+              <li><a href="index.html#skills" class="scroll-link">Skills</a></li>
+              <li><a href="index.html#experience" class="scroll-link">Experience</a></li>
+              <li><a href="index.html#projects" class="scroll-link">Projects</a></li>
+              <li><a href="index.html#contactMe" class="scroll-link">Contact Me</a></li>
+            </ul>
+          </div>
+        </nav>
+      </div>
+    </header>
+    
+    <h1 style="margin-top: 100px;">Reminder Scripts</h1>
+    <p style="max-width: 1200px; text-align: center; margin: 0 auto; margin-bottom: 20px;">
+      The paired scripts below showcase how I’ve used Python and Bash to automate scheduling tasks, including sending reminders, one-time messages, and cancellations.
+      Python handles the core functionality behind message delivery, while Bash provides an intuitive, interactive prompt that makes the scripts accessible to non-technical team members.
+    </p>
+    <!-- Navigation container for the carousel -->
+    <div class="carousel-nav">
+      <button onclick="prevSlide()">&#10094;</button>
+      <button onclick="nextSlide()">&#10095;</button>
+    </div>
+    
+    <div class="carousel">
+      <div class="carousel-track">
+
+        <!-- Slide 1: Schedule Actigraph Messages -->
+        <div class="carousel-slide">
+          <h2>Schedule Actigraph Messages</h2>
+          <div class="code-pair">
+            <div class="code-column">
+              <h3>Python (schedule_actigraph_messages.py)</h3>
+              <pre><code class="python">
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Thu Feb 27 16:55:47 2025
+Author: mdunne34
+
+"""
+
+from datetime import datetime, timedelta, timezone
+import sys
+from twilio.rest import Client
+import os
+import pytz
+
+# Load Twilio credentials from environment variables
+ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID")
+AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN")
+MESSAGING_SERVICE_SID = os.getenv("TWILIO_MESSAGING_SERVICE_SID")
+
+# Exit if any required credentials are missing
+if not ACCOUNT_SID or not AUTH_TOKEN or not MESSAGING_SERVICE_SID:
+    print("Error: Twilio credentials not set.")
+    sys.exit(1)
+
+# Validate input: script expects exactly 4 arguments
+if len(sys.argv) != 5:
+    print("Usage: python schedule_actigraph_messages.py <subject_ID> <start_date> <start_time> <recipient_phone>")
+    sys.exit(1)
+
+# Parse command-line arguments
+subject_ID = sys.argv[1]
+start_date = sys.argv[2]       # Format: YYYY-MM-DD
+start_time = sys.argv[3]       # Format: HH:MM (24-hour, UTC)
+recipient_phone = sys.argv[4]
+
+# Define log filename
+LOG_FILE = f"{subject_ID}_scheduled_actigraph_messages.log"
+
+# Timezone setup
+utc = pytz.utc
+eastern = pytz.timezone("America/New_York")
+
+# Combine date and time, assume UTC input, then convert to Eastern Time
+send_time_utc = datetime.strptime(f"{start_date} {start_time}", "%Y-%m-%d %H:%M").replace(tzinfo=utc)
+send_time_et = send_time_utc.astimezone(eastern)
+
+# Validate that the scheduled time is at least 15 minutes from now
+now_utc = datetime.now(timezone.utc)
+min_schedule_time = now_utc + timedelta(minutes=15)
+
+# Print diagnostic info
+print(f"Current UTC Time: {now_utc.strftime('%Y-%m-%d %H:%M:%S')}")
+print(f"Scheduled Time (UTC): {send_time_utc.strftime('%Y-%m-%d %H:%M:%S')}")
+print(f"Scheduled Time (ET): {send_time_et.strftime('%Y-%m-%d %I:%M %p %Z')}")
+
+if send_time_utc < min_schedule_time:
+    print("Error: Scheduled time must be at least 15 minutes in the future.")
+    sys.exit(1)
+
+# Initialize Twilio client
+client = Client(ACCOUNT_SID, AUTH_TOKEN)
+
+# Open the log file and append a new entry for each day's message
+with open(LOG_FILE, "a") as log_file:
+    for i in range(7):  # Schedule a message each day for 7 days
+        send_time_day = send_time_utc + timedelta(days=i)
+        send_time_day_et = send_time_day.astimezone(eastern)
+
+        # Schedule the message using Twilio API
+        message = client.messages.create(
+            body=f'This is day {i+1} of 7 days that we are asking you to wear the Actigraph on your waist. \
+Please do your best to wear it for 10+ waking hours, and reattach after any removal.',
+            messaging_service_sid=MESSAGING_SERVICE_SID,
+            to=recipient_phone,
+            send_at=send_time_day.isoformat(),
+            schedule_type="fixed"
+        )
+
+        # Log the message details to file
+        log_entry = f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} | {subject_ID} | {send_time_day_et.strftime('%Y-%m-%d %I:%M %p %Z')} | SID: {message.sid}\n"
+        log_file.write(log_entry)
+
+        print(f"Scheduled message {i+1} (SID: {message.sid})")
+
+print(f"Message SIDs saved to {LOG_FILE}")
+
+              </code></pre>
+            </div>
+            <div class="code-column">
+              <h3>Bash (schedule_actigraph_messages.sh)</h3>
+              <pre><code class="bash">
+#!/bin/bash
+
+# Author: Matt Dunne
+# Purpose: Schedule a one-time actigraph reminder message using Twilio
+
+# Load Twilio credentials from an external shell script
+if [[ -f "twilio_credentials.sh" ]]; then
+    source ./twilio_credentials.sh
+else
+    echo "Error: Credentials file not found."
+    exit 1
+fi
+
+# Function to ensure the scheduled time is at least 15 minutes in the future (UTC)
+validate_future_time() {
+    now_utc=$(date -u +"%Y-%m-%d %H:%M")
+    fifteen_minutes_later=$(date -u -d "15 minutes" +"%Y-%m-%d %H:%M")
+    if [[ "$1 $2" < "$fifteen_minutes_later" ]]; then
+        echo "Error: Scheduled time must be at least 15 minutes in the future."
+        return 1
+    fi
+    return 0
+}
+
+# Prompt for subject ID and ensure it is not empty
+while true; do
+    read -p "Enter Subject ID: " subject_ID
+    [[ ! -z "$subject_ID" ]] && break || echo "Subject ID cannot be empty."
+done
+
+# Prompt for start date, validate and convert to ISO format (YYYY-MM-DD)
+while true; do
+    read -p "Enter start date (MM/DD/YYYY): " start_date
+    start_date_iso=$(date -d "$start_date" +"%Y-%m-%d" 2>/dev/null)
+    [[ $? -eq 0 && ! -z "$start_date_iso" ]] && break || echo "Invalid date format."
+done
+
+# Prompt for start time in Eastern Time and convert to UTC
+while true; do
+    read -p "Enter start time in Eastern Time (e.g., 9:30PM): " start_time
+
+    # Normalize time to include space between HH:MM and AM/PM (e.g., 9:30PM → 9:30 PM)
+    normalized_time=$(echo "$start_time" | sed -E 's/([0-9]+:[0-9]+)(AM|PM|am|pm)/\1 \U\2/I')
+
+    # Determine Eastern Time offset (EDT = UTC-4, EST = UTC-5)
+    dst_check=$(TZ="America/New_York" date -d "$start_date_iso" +"%Z")
+    et_offset="-5 hours"
+    [[ "$dst_check" == "EDT" ]] && et_offset="-4 hours"
+
+    # Combine date and time, apply Eastern offset, and convert to UTC
+    start_datetime_et="$start_date_iso $normalized_time"
+    start_datetime_utc=$(date -d "$start_datetime_et $et_offset" -u +"%Y-%m-%d %H:%M" 2>/dev/null)
+
+    # Echo the parsed time to the user for verification
+    echo "Entered ET Time: $start_datetime_et, Converted UTC: $start_datetime_utc"
+
+    # Validate the time and break loop if valid
+    if [[ -n "$start_datetime_utc" ]]; then
+        IFS=' ' read -r start_date_utc start_time_utc <<< "$start_datetime_utc"
+        validate_future_time "$start_date_utc" "$start_time_utc" && break
+    else
+        echo "Invalid time or too soon."
+    fi
+done
+
+# Prompt for recipient phone number and validate format
+while true; do
+    read -p "Enter recipient phone number (10-digit): " recipient_phone
+    if [[ $recipient_phone =~ ^[0-9]{10}$ ]]; then
+        recipient_phone="+1$recipient_phone"
+        break
+    else
+        echo "Invalid phone number."
+    fi
+done
+
+# Display final scheduling details to user
+echo "Scheduling for Subject ID: $subject_ID, Time: $start_time_utc UTC, Phone: $recipient_phone"
+
+# Activate Python virtual environment containing the Twilio client
+source /restricted/projectnb/bpnlab/venvs/twilio/bin/activate
+
+# Call Python script to perform the actual message scheduling
+python3 schedule_actigraph_messages.py "$subject_ID" "$start_date_utc" "$start_time_utc" "$recipient_phone"
+
+              </code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 2: Schedule Saliva Messages -->
+        <div class="carousel-slide">
+          <h2>Schedule Saliva Messages</h2>
+          <div class="code-pair">
+            <div class="code-column">
+              <h3>Python (schedule_saliva_messages.py)</h3>
+              <pre><code class="python">
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Thu Feb 27 21:28:13 2025
+Author: mdunne34
+"""
+
+from datetime import datetime, timedelta, timezone
+import sys
+from twilio.rest import Client
+import os
+import pytz
+
+# Load Twilio credentials from environment variables
+ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID")
+AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN")
+MESSAGING_SERVICE_SID = os.getenv("TWILIO_MESSAGING_SERVICE_SID")
+
+# Exit if any required credential is missing
+if not ACCOUNT_SID or not AUTH_TOKEN or not MESSAGING_SERVICE_SID:
+    print("Error: Twilio credentials not set.")
+    sys.exit(1)
+
+# Ensure script is called with the correct number of arguments
+if len(sys.argv) != 4:
+    print("Usage: python schedule_saliva_messages.py <subject_ID> <start_date> <recipient_phone>")
+    sys.exit(1)
+
+# Extract command-line arguments
+subject_ID = sys.argv[1]          # Unique identifier for the participant
+start_date = sys.argv[2]          # Start date of the reminder schedule (YYYY-MM-DD)
+recipient_phone = sys.argv[3]     # Recipient's phone number in +1XXXXXXXXXX format
+
+# Create a log file to record scheduled messages
+LOG_FILE = f"scheduled_saliva_messages_{subject_ID}.log"
+
+# Define the sample collection schedule (time and message text)
+message_schedule = [
+    ("08:00", "Reminder: collect your 1st saliva sample."),
+    ("08:30", "Reminder: collect your 2nd saliva sample."),
+    ("12:00", "Reminder: collect your 3rd saliva sample."),
+    ("16:00", "Reminder: collect your 4th saliva sample."),
+    ("21:00", "Reminder: collect your 5th saliva sample."),
+]
+
+# Set up timezones for conversion
+utc = pytz.utc
+eastern = pytz.timezone("America/New_York")
+
+# Open the log file in append mode
+with open(LOG_FILE, "a") as log_file:
+    # Loop over two consecutive days starting from the start_date
+    for day in range(2):
+        schedule_date = datetime.strptime(start_date, "%Y-%m-%d") + timedelta(days=day)
+        
+        # Loop over each scheduled saliva collection time
+        for time, message_body in message_schedule:
+            # Combine date and time, localize to Eastern Time
+            send_time_et = eastern.localize(datetime.strptime(f"{schedule_date.strftime('%Y-%m-%d')} {time}", "%Y-%m-%d %H:%M"))
+            
+            # Convert ET to UTC for Twilio scheduling
+            send_time_utc = send_time_et.astimezone(utc)
+            
+            # Initialize Twilio client
+            client = Client(ACCOUNT_SID, AUTH_TOKEN)
+            
+            try:
+                # Schedule the message through Twilio
+                message = client.messages.create(
+                    body=message_body,
+                    messaging_service_sid=MESSAGING_SERVICE_SID,
+                    to=recipient_phone,
+                    send_at=send_time_utc.isoformat(),
+                    schedule_type="fixed"
+                )
+                
+                # Log the scheduled message SID with details
+                log_entry = f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} | {subject_ID} | {send_time_et.strftime('%Y-%m-%d %I:%M %p %Z')} | SID: {message.sid}\n"
+                log_file.write(log_entry)
+                
+                print(f"Scheduled message (SID: {message.sid})")
+            except Exception as e:
+                print(f"Failed to schedule: {e}")
+
+# Final message after all scheduling attempts
+print(f"Message SIDs saved to {LOG_FILE}")
+
+              </code></pre>
+            </div>
+            <div class="code-column">
+              <h3>Bash (schedule_saliva_messages.sh)</h3>
+              <pre><code class="bash">
+#!/bin/bash
+
+# Schedule saliva sample text message reminders
+
+# Load Twilio credentials from local environment file
+if [[ -f "twilio_credentials.sh" ]]; then
+    source ./twilio_credentials.sh
+else
+    echo "Error: Credentials not found."
+    exit 1
+fi
+
+# Function to validate that the scheduled time is at least 15 minutes in the future (UTC)
+validate_future_time() {
+    now_utc=$(date -u +"%Y-%m-%d %H:%M")
+    fifteen_minutes_later=$(date -u -d "15 minutes" +"%Y-%m-%d %H:%M")
+    if [[ "$1 $2" < "$fifteen_minutes_later" ]]; then
+        echo "Error: Scheduled time too soon."
+        return 1
+    fi
+    return 0
+}
+
+# Prompt for subject ID (cannot be empty)
+while true; do
+    read -p "Enter Subject ID: " subject_ID
+    [[ ! -z "$subject_ID" ]] && break
+done
+
+# Prompt for start date, convert to ISO format (YYYY-MM-DD) and validate it
+while true; do
+    read -p "Enter start date (MM/DD/YYYY): " start_date
+    start_date_iso=$(date -d "$start_date" +"%Y-%m-%d" 2>/dev/null)
+    [[ $? -eq 0 && ! -z "$start_date_iso" ]] && break
+done
+
+# Prompt for recipient phone number, validate format, and add country code
+while true; do
+    read -p "Enter recipient phone (10-digit): " recipient_phone
+    if [[ $recipient_phone =~ ^[0-9]{10}$ ]]; then
+        recipient_phone="+1$recipient_phone"
+        break
+    else
+        echo "Invalid phone number."
+    fi
+done
+
+# Print out the inputs to confirm before scheduling
+echo "Scheduling for $subject_ID, Date: $start_date_iso, Phone: $recipient_phone"
+
+# Activate virtual environment with Twilio installed
+source /restricted/projectnb/bpnlab/venvs/twilio/bin/activate
+
+# Call the Python script to schedule the messages
+python3 schedule_saliva_messages.py "$subject_ID" "$start_date_iso" "$recipient_phone"
+
+              </code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 3: Cancel Individual Messages -->
+        <div class="carousel-slide">
+          <h2>Cancel Individual Messages</h2>
+          <div class="code-pair">
+            <div class="code-column">
+              <h3>Python (cancel_individual_messages.py)</h3>
+              <pre><code class="python">
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Thu Feb 27 20:48:08 2025
+Author: mdunne34
+"""
+
+import os
+import sys
+from twilio.rest import Client
+
+# Ensure exactly one command-line argument (the message SID) is provided
+if len(sys.argv) != 2:
+    print("Usage: python cancel_individual_messages.py <MESSAGE_SID>")
+    sys.exit(1)
+
+# Retrieve the message SID from the command-line argument
+MESSAGE_SID = sys.argv[1]
+
+# Load Twilio credentials from environment variables
+ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID")
+AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN")
+
+# Exit if any credential is missing
+if not ACCOUNT_SID or not AUTH_TOKEN:
+    print("Error: Twilio credentials not set.")
+    sys.exit(1)
+
+# Initialize Twilio client
+client = Client(ACCOUNT_SID, AUTH_TOKEN)
+
+# Attempt to cancel the scheduled message using the provided SID
+try:
+    client.messages(MESSAGE_SID).update(status="canceled")
+    print(f"Deleted scheduled message: {MESSAGE_SID}")
+except Exception as e:
+    print(f"Failed to delete message {MESSAGE_SID}: {e}")
+
+              </code></pre>
+            </div>
+            <div class="code-column">
+              <h3>Bash (cancel_individual_messages.sh)</h3>
+              <pre><code class="bash">
+#!/bin/bash
+
+# Cancel an individual scheduled message using its Twilio Message SID
+
+# Load Twilio credentials from external file
+if [[ -f "twilio_credentials.sh" ]]; then
+    source ./twilio_credentials.sh
+else
+    echo "Error: Credentials not found."
+    exit 1
+fi
+
+# Prompt user to enter the Message SID and ensure it is not empty
+while true; do
+    read -p "Enter the Twilio Message SID to cancel: " MESSAGE_SID
+    [[ ! -z "$MESSAGE_SID" ]] && break
+done
+
+# Ensure necessary Twilio credentials are set before continuing
+if [[ -z "$TWILIO_ACCOUNT_SID" || -z "$TWILIO_AUTH_TOKEN" ]]; then
+    echo "Error: Twilio credentials not set."
+    exit 1
+fi
+
+# Activate the Python virtual environment where the Twilio library is installed
+source /restricted/projectnb/bpnlab/venvs/twilio/bin/activate
+
+# Call the Python script to cancel the specified message
+python3 cancel_individual_messages.py "$MESSAGE_SID"
+                
+              </code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 4: Cancel Scheduled Actigraph Messages -->
+        <div class="carousel-slide">
+          <h2>Cancel Scheduled Actigraph Messages</h2>
+          <div class="code-pair">
+            <div class="code-column">
+              <h3>Python (cancel_scheduled_actigraph_messages.py)</h3>
+              <pre><code class="python">
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Thu Feb 27 20:39:10 2025
+Author: mdunne34
+"""
+
+import os
+import sys
+from twilio.rest import Client
+
+# Load Twilio credentials from environment variables
+ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID")
+AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN")
+
+# Exit if credentials are missing
+if not ACCOUNT_SID or not AUTH_TOKEN:
+    print("Error: Twilio credentials not set.")
+    sys.exit(1)
+
+# Require exactly one argument: subject ID
+if len(sys.argv) != 2:
+    print("Usage: python cancel_scheduled_actigraph_messages.py <subject_ID>")
+    sys.exit(1)
+
+# Parse the subject ID
+subject_ID = sys.argv[1]
+
+# Define log and backup filenames based on the subject
+LOG_FILE = f"scheduled_messages_{subject_ID}.log"
+BACKUP_FILE = f"scheduled_messages_{subject_ID}_backup.log"
+
+# Initialize Twilio client
+client = Client(ACCOUNT_SID, AUTH_TOKEN)
+
+# Check that the log file exists
+if not os.path.exists(LOG_FILE):
+    print(f"Error: Log file '{LOG_FILE}' not found.")
+    sys.exit(1)
+
+# Create a backup of the log file before modifying it
+os.system(f"cp {LOG_FILE} {BACKUP_FILE}")
+print(f"Backup created: {BACKUP_FILE}")
+
+# Read all log lines
+with open(LOG_FILE, "r") as file:
+    lines = file.readlines()
+
+# List to keep track of any messages that fail to cancel
+remaining_lines = []
+
+# Loop through each line and attempt to cancel the message via Twilio API
+for line in lines:
+    parts = line.strip().split("|")
+    if len(parts) >= 4:
+        sid = parts[-1].replace("SID:", "").strip()
+        try:
+            client.messages(sid).update(status="canceled")
+            print(f"Deleted scheduled message: {sid}")
+        except Exception as e:
+            print(f"Failed to delete message {sid}: {e}")
+            remaining_lines.append(line)
+
+# Rewrite the log file with only the messages that failed to cancel
+with open(LOG_FILE, "w") as file:
+    file.writelines(remaining_lines)
+
+# If all messages were successfully canceled, delete the log file
+if not remaining_lines:
+    print("All scheduled messages for Subject ID:", subject_ID, "deleted.")
+    os.remove(LOG_FILE)
+else:
+    print(f"Some messages could not be deleted. Check {LOG_FILE}.")
+
+              </code></pre>
+            </div>
+            <div class="code-column">
+              <h3>Bash (cancel_scheduled_actigraph_messages.sh)</h3>
+              <pre><code class="bash">
+#!/bin/bash
+
+# Cancel scheduled actigraph messages for a specific subject using a Python script
+
+# Load Twilio credentials from external file
+if [[ -f "twilio_credentials.sh" ]]; then
+    source ./twilio_credentials.sh
+else
+    echo "Error: Credentials not found."
+    exit 1
+fi
+
+# Prompt user for Subject ID and ensure input is not empty
+while true; do
+    read -p "Enter Subject ID to cancel messages: " subject_ID
+    [[ ! -z "$subject_ID" ]] && break
+done
+
+# Construct the expected log file name
+LOG_FILE="scheduled_messages_${subject_ID}.log"
+
+# Validate that required Twilio credentials are set
+if [[ -z "$TWILIO_ACCOUNT_SID" || -z "$TWILIO_AUTH_TOKEN" ]]; then
+    echo "Error: Twilio credentials not set."
+    exit 1
+fi
+
+# Activate virtual environment with Twilio Python package
+source /restricted/projectnb/bpnlab/venvs/twilio/bin/activate
+
+# Check if log file exists for the given subject and cancel messages
+if [[ -f "$LOG_FILE" ]]; then
+    echo "Deleting scheduled messages for Subject ID: $subject_ID..."
+    python3 cancel_scheduled_actigraph_messages.py "$subject_ID"
+else
+    echo "Error: No scheduled messages for Subject ID: $subject_ID."
+    exit 1
+fi
+              </code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 5: Send One-time Message -->
+        <div class="carousel-slide">
+          <h2>Send One-time Message</h2>
+          <div class="code-pair">
+            <div class="code-column">
+              <h3>Python (send_onetime_message.py)</h3>
+              <pre><code class="python">
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Thu Feb 27 21:12:07 2025
+Author: mdunne34
+"""
+
+import os
+import sys
+from twilio.rest import Client
+
+# Load Twilio credentials from environment variables
+ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID")
+AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN")
+TWILIO_PHONE_NUMBER = os.getenv("TWILIO_PHONE_NUMBER")
+
+# Exit if any required credential is missing
+if not ACCOUNT_SID or not AUTH_TOKEN or not TWILIO_PHONE_NUMBER:
+    print("Error: Twilio credentials are not set.")
+    sys.exit(1)
+
+# Ensure the script receives exactly 2 command-line arguments: phone number and message
+if len(sys.argv) != 3:
+    print("Usage: python send_custom_message.py <recipient_phone> <message>")
+    sys.exit(1)
+
+# Parse arguments
+recipient_phone = sys.argv[1]   # e.g., "+11234567890"
+message_body = sys.argv[2]      # Custom message to be sent
+
+# Initialize Twilio client with provided credentials
+client = Client(ACCOUNT_SID, AUTH_TOKEN)
+
+# Attempt to send the message and handle any errors
+try:
+    message = client.messages.create(
+        body=message_body,
+        from_=TWILIO_PHONE_NUMBER,
+        to=recipient_phone
+    )
+    print(f"Message sent successfully to {recipient_phone} (SID: {message.sid})")
+except Exception as e:
+    print(f"Failed to send message: {e}")
+
+              </code></pre>
+            </div>
+            <div class="code-column">
+              <h3>Bash (send_onetime_message.sh)</h3>
+              <pre><code class="bash">
+#!/bin/bash
+
+# Author: Matt Dunne
+# Purpose: Send an individual one-time text message using Twilio
+# Usage: sh send_onetime_message.sh
+
+# Load Twilio credentials from a separate file
+if [[ -f "twilio_credentials.sh" ]]; then
+    source ./twilio_credentials.sh
+else
+    echo "Error: Credentials file 'twilio_credentials.sh' not found."
+    exit 1
+fi
+
+# Prompt user for recipient phone number and validate format
+# Accepts either 10-digit US format or full E.164 format (+1XXXXXXXXXX)
+while true; do
+    read -p "Enter recipient phone number (10-digit, e.g., 9876543210): " recipient_phone
+    if [[ $recipient_phone =~ ^[0-9]{10}$ ]]; then
+        recipient_phone="+1$recipient_phone"  # Automatically prepend country code
+        break
+    elif [[ $recipient_phone =~ ^\+1[0-9]{10}$ ]]; then
+        break
+    else
+        echo "Invalid phone number. Please enter a 10-digit U.S. number."
+    fi
+done
+
+# Prompt user to enter the message content (cannot be empty)
+while true; do
+    read -p "Enter the message to send: " message
+    if [[ ! -z "$message" ]]; then
+        break
+    else
+        echo "Message cannot be empty."
+    fi
+done
+
+# Verify all required Twilio credentials are set
+if [[ -z "$TWILIO_ACCOUNT_SID" || -z "$TWILIO_AUTH_TOKEN" || -z "$TWILIO_PHONE_NUMBER" ]]; then
+    echo "Error: Twilio credentials are not set."
+    exit 1
+fi
+
+# Activate Python virtual environment containing Twilio package
+source /restricted/projectnb/bpnlab/venvs/twilio/bin/activate
+
+# Call the Python script to send the message
+python3 send_onetime_message.py "$recipient_phone" "$message"
+                
+              </code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 6: Study Visit Reminder -->
+        <div class="carousel-slide">
+          <h2>Study Visit Reminder</h2>
+          <div class="code-pair">
+            <div class="code-column">
+              <h3>Python (study_visit_reminder.py)</h3>
+              <pre><code class="python">
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Mon Mar 3 13:30:39 2025
+@author: mdunne34
+"""
+
+# Import required modules
+from datetime import datetime, timedelta, timezone
+import sys
+from twilio.rest import Client
+import os
+import pytz
+
+# Load Twilio credentials from environment variables
+ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID")
+AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN")
+MESSAGING_SERVICE_SID = os.getenv("TWILIO_MESSAGING_SERVICE_SID")
+
+# Exit if any Twilio credential is missing
+if not ACCOUNT_SID or not AUTH_TOKEN or not MESSAGING_SERVICE_SID:
+    print("Error: Twilio credentials not set.")
+    sys.exit(1)
+
+# Expect exactly 6 command-line arguments; otherwise print usage instructions
+if len(sys.argv) != 7:
+    print("Usage: python study_visit_reminder.py <subject_ID> <visit_type> <visit_date> <visit_time> <location> <recipient_phone>")
+    sys.exit(1)
+
+# Parse input arguments
+subject_ID = sys.argv[1]       # Subject ID
+visit_type = sys.argv[2]       # Visit type (1–5)
+visit_date = sys.argv[3]       # Date of visit (YYYY-MM-DD)
+visit_time = sys.argv[4]       # Time of visit (e.g., 10:00 AM)
+location = sys.argv[5]         # Location of the visit
+recipient_phone = sys.argv[6]  # Recipient's phone number
+
+# Define reminder messages for each visit type
+visit_messages = {
+    "1": f"This is a reminder that your first study visit is scheduled for {visit_date} at {visit_time}. This visit will take place at the {location} and last approximately 1 hour and 30 minutes. Please see your email for more details.",
+    "2": f"This is a reminder that your second study visit is scheduled for {visit_date} at {visit_time}. This visit will take place at the BU Kilachand Center and last approximately 1 hour.",
+    "3": f"This is a reminder that your third study visit is scheduled for {visit_date} at {visit_time}. This visit will take place at the BU Medical Campus and last approximately 3 hours.",
+    "4": f"This is a reminder that your third study visit is scheduled for {visit_date} at {visit_time}. This portion of the visit will take place at the BU Medical Campus and last approximately 1 hour. You will receive an additional reminder for the second part of your visit.",
+    "5": f"This is a reminder that the remainder of your third study visit is scheduled for {visit_date} at {visit_time}. This portion of the visit will take place at the {location} and last approximately 2 hours."
+}
+
+# Select the message for the specified visit type
+message_body = visit_messages.get(visit_type, "Invalid visit type")
+
+# Create a log file named with the subject ID
+LOG_FILE = f"study_visit_reminder_{subject_ID}.log"
+
+# Timezone setup: convert visit time from Eastern Time to UTC
+utc = pytz.utc
+eastern = pytz.timezone("America/New_York")
+
+# Parse the visit date and time into a timezone-aware datetime in ET
+visit_datetime_et = eastern.localize(datetime.strptime(f"{visit_date} {visit_time}", "%Y-%m-%d %I:%M %p"))
+visit_datetime_utc = visit_datetime_et.astimezone(utc)
+
+# Schedule the message to send 24 hours before the visit time
+reminder_time_utc = visit_datetime_utc - timedelta(hours=24)
+reminder_time_et = reminder_time_utc.astimezone(eastern)
+
+# Initialize Twilio client with loaded credentials
+client = Client(ACCOUNT_SID, AUTH_TOKEN)
+
+# Try to create (schedule) the message and log the result
+try:
+    message = client.messages.create(
+        body=message_body,
+        messaging_service_sid=MESSAGING_SERVICE_SID,
+        to=recipient_phone,
+        send_at=reminder_time_utc.isoformat(),
+        schedule_type="fixed"
+    )
+
+    # Append scheduling info to the log file
+    with open(LOG_FILE, "a") as log_file:
+        log_file.write(f"{datetime.now()} | {subject_ID} | {reminder_time_et} | SID: {message.sid}\n")
+
+    print(f"Scheduled message for {reminder_time_et} (Message SID: {message.sid})")
+
+# Handle Twilio errors gracefully
+except Exception as e:
+    print(f"Failed to schedule message: {e}")
+                
+              </code></pre>
+            </div>
+            <div class="code-column">
+              <h3>Bash (study_visit_reminder.sh)</h3>
+              <pre><code class="bash">
+#!/bin/bash
+# study_visit_reminder.sh
+# This script interactively collects the required information for scheduling
+# a study visit reminder and then calls the study_visit_reminder.py script.
+#
+# Usage: ./study_visit_reminder.sh
+
+# Function to prompt for input until a non-empty value is provided
+prompt_non_empty() {
+    local prompt_message="$1"
+    local input_var
+    while true; do
+        read -p "$prompt_message: " input_var
+        if [[ -n "$input_var" ]]; then
+            echo "$input_var"
+            break
+        else
+            echo "Input cannot be empty, please try again."
+        fi
+    done
+}
+
+# Prompt for Subject ID (non-empty)
+subject_ID=$(prompt_non_empty "Enter Subject ID")
+
+# Prompt for Visit Type, validating numeric input 1–5
+while true; do
+    read -p "Enter Visit Type (1, 2, 3, 4, or 5): " visit_type
+    if [[ "$visit_type" =~ ^[1-5]$ ]]; then
+        break
+    else
+        echo "Invalid visit type. Please enter a number between 1 and 5."
+    fi
+done
+
+# Prompt for Visit Date in YYYY-MM-DD format
+while true; do
+    read -p "Enter Visit Date (YYYY-MM-DD): " visit_date
+    if [[ "$visit_date" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]]; then
+        break
+    else
+        echo "Invalid date format. Please use YYYY-MM-DD."
+    fi
+done
+
+# Prompt for Visit Time in 12-hour format (HH:MM AM/PM)
+while true; do
+    read -p "Enter Visit Time (HH:MM AM/PM, e.g., 09:30 AM): " visit_time
+    if [[ "$visit_time" =~ ^(0?[1-9]|1[0-2]):[0-5][0-9][[:space:]]?(AM|PM|am|pm)$ ]]; then
+        break
+    else
+        echo "Invalid time format. Please use HH:MM AM/PM."
+    fi
+done
+
+# Prompt for location (non-empty)
+location=$(prompt_non_empty "Enter Location for the visit (e.g., facility name)")
+
+# Prompt for recipient phone number (10-digit), prepend +1 for Twilio
+while true; do
+    read -p "Enter Recipient Phone Number (10-digit, no spaces): " recipient_phone
+    if [[ "$recipient_phone" =~ ^[0-9]{10}$ ]]; then
+        recipient_phone="+1$recipient_phone"
+        break
+    else
+        echo "Invalid phone number. Please enter a 10-digit number."
+    fi
+done
+
+# Display collected input for confirmation
+echo ""
+echo "Collected Input:"
+echo "Subject ID: $subject_ID"
+echo "Visit Type: $visit_type"
+echo "Visit Date: $visit_date"
+echo "Visit Time: $visit_time"
+echo "Location: $location"
+echo "Recipient Phone: $recipient_phone"
+echo ""
+
+# Confirm before proceeding
+read -p "Proceed with scheduling the study visit reminder? (y/n): " confirm
+if [[ "$confirm" != "y" && "$confirm" != "Y" ]]; then
+    echo "Aborted by user."
+    exit 0
+fi
+
+# Call the Python script with all collected parameters
+python3 study_visit_reminder.py "$subject_ID" "$visit_type" "$visit_date" "$visit_time" "$location" "$recipient_phone"
+                
+              </code></pre>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Optional: Footer / Back button -->
+    <div style="text-align: center; margin-top: 40px;">
+      <a href="index.html#projects" class="btn btn-dark" style="padding: 10px 20px; font-size: 16px; margin-bottom: 20px;">
+        ← Back to Projects
+      </a>
+    </div>
+    
+    <!-- Include Highlight.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script>
+      hljs.highlightAll();
+
+      let currentSlide = 0;
+      function showSlide(index) {
+        const track = document.querySelector('.carousel-track');
+        const slides = document.querySelectorAll('.carousel-slide');
+        if(index < 0) index = slides.length - 1;
+        if(index >= slides.length) index = 0;
+        currentSlide = index;
+        const slideWidth = slides[0].offsetWidth;
+        track.style.transform = 'translateX(' + (-slideWidth * currentSlide) + 'px)';
+      }
+      function prevSlide() {
+        showSlide(currentSlide - 1);
+      }
+      function nextSlide() {
+        showSlide(currentSlide + 1);
+      }
+      window.addEventListener('resize', function() {
+        showSlide(currentSlide);
+      });
+      // Initialize the first slide on load
+      showSlide(currentSlide);
+    </script>
+  </body>
+</html>

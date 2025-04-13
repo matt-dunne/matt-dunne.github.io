@@ -80,6 +80,29 @@
 </head>
 
 <body>
+<header class="header">
+  <div class="container">
+    <nav class="navbar navbar-inverse" role="navigation">
+      <div class="navbar-header">
+        <button type="button" id="nav-toggle" class="navbar-toggle" data-toggle="collapse" data-target="#main-nav"> <span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </button>
+        </div>
+      <!--/.navbar-header-->
+      <div id="main-nav" class="collapse navbar-collapse">
+        <ul class="nav navbar-nav" id="mainNav">
+          <li class="active"><a href="#home" class="scroll-link">Home</a></li>
+          <li><a href="#introText" class="scroll-link">About Me</a></li>
+          <li><a href="#skills" class="scroll-link">Skills</a></li>
+          <li><a href="#experience" class="scroll-link">Experience</a></li>
+          <li><a href="#projects" class="scroll-link">Projects</a></li>
+          <li><a href="#contactMe" class="scroll-link">Contact Me</a></li>
+        </ul>
+      </div>
+      <!--/.navbar-collapse--> 
+    </nav>
+    <!--/.navbar--> 
+  </div>
+  <!--/.container--> 
+</header>
 <!--/.header-->
 <div id="#top"></div>
 <section id="home">
@@ -101,24 +124,638 @@
 	                       
 	                    
 	                </div>-->
-	                  <p class="email">🚧Under Construction🚧<br/>Get in touch: <a href="mailto:matt.dunne14@gmail.com">matt.dunne14@gmail.com</a></p>
+	                <!--<a href="#" class="hireMe">Hire Me!</a>-->
 		    </div>
             </div> 
   </div>
+</section>
+<section id="introText">
+  <div class="container">
+    <div>
+      <h1>I am a neuroscientist turned data-driven problem solver</h1>
+      <p>I have a passion for uncovering patterns, asking smart questions, and bridging science with strategy. Whether working with complex datasets or translating research into action, I bring a unique mix of analytical depth, creative perspective, and intellectual curiosity to every challenge I take on.
+</p>
+    </div>
+  </div>
+</section>
+<!--About-->
+<section id="aboutMe">
+  <div class="container">
+    <div class="row"> 
+      <!-- item -->
+      <div class="col-md-4 tileBox"> <img src="images/me.jpg" alt="me"/> </div>
+      <div class="col-md-8 tileBox">
+        <div class="txtHead">
+          <h2>Hello, I am Matt Dunne...</h2>
+          <h3>Neuroscientist | Data Scientist | Everything Scientist</
+	  h3>
+	  <h4>Boston MA</h4>
+        </div>
+        <p>Thanks for visiting my website! Below you'll find some more information about the path I've taken, the skills I've developed, and some of the projects I've worked on, both professionally and personally. <br/>
+          <br/>
+          Whether you are a potential employer, an old friend, or just wandering by, if anything you see resonates with you or you just want to say hi feel free to leave me a comment!</p>
+      </div>
+      <!-- end: --> 
+    </div>
+  </div>
+</section>
+<!--Quote-->
+<section id="quote" class="bg-parlex">
+  <div class="parlex-back">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <h2 id="quote-text">“Magic is just what’s not yet been explained by science.” <span>-Terry Pratchett</span></h2>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  const quotes = [
+    { text: "Humans need fantasy to be human. To be the place where the falling angel meets the rising ape.", author: "Terry Pratchett" },
+    { text: "The Guide is definitive. Reality is frequently inaccurate.", author: "Douglas Adams" },
+    { text: "If the human brain were so simple that we could understand it, we would be so simple that we couldn’t.", author: "Emerson M. Pugh" },
+    { text: "You are who you are not because of your memories. You are who you are because of the choices you make.", author: "Terry Pratchett" },
+    { text: "Sometimes it's important to know when to stop. Sometimes it's important to know when not to stop.", author: "Terry Pratchett" }
+  ];
+
+  let index = 0;
+  const quoteElement = document.getElementById("quote-text");
+
+  function updateQuote() {
+    const { text, author } = quotes[index];
+    quoteElement.innerHTML = `“${text}” <span>–${author}</span>`;
+    index = (index + 1) % quotes.length;
+  }
+
+  setInterval(updateQuote, 7000); // change quote every 7 seconds
+</script>
+
+<!--Skills-->
+<section id="skills" class="secPad white">
+  <div class="container" style="position: relative;">
+    <!-- NEW: Logo overlay element -->
+    <div id="logo-overlay">
+      <img src="" alt="Logo Preview">
+      <div class="overlay-text"></div>
+    </div>
+    <!-- Existing content for skills -->
+    <div class="heading"> 
+      <h2>My Skills</h2>
+      <p>Below are some of the software packages, programming languages, and more that I have worked with in my career.
+         Hover over each logo for more explanation of the specific packages I have used, more information about the tool, or more information about how I've used it.
+        Note that there is some overlap between these, e.g. Python is used for neuroimaging anaylsis, CONN is an SPM toolbox run through MATLAB, etc.
+        </p>
+    </div>
+
+    <div class="row skillContainer justify-content-center">
+
+      <!-- Skill Box 1 -->
+      <div class="col-md-4 skillBox text-center">
+        <h3>Programming | Data Analysis</h3>
+      
+        <div class="logo-row">
+
+          <!-- Top Row: Python + R -->
+          <div class="logo-sub-row top-row">
+            <!-- Python -->
+            <div class="logo-col large-logo python-col">
+              <div class="logo-hover-wrapper">
+                <img src="images/python_logo2.png" class="logo-img" alt="Python">
+              </div>
+              <div class="logo-text">
+                <h4>Python</h4>
+                <p>Packages I've used in <b>Python</b> include <b>NumyPy</b> and <b>Pandas</b> for data preprocessing and
+                   numerical analysis—<b>Pandas</b> for handling structured datasets like survey responses
+                    and logs, and <b>NumPy</b> for fast, vectorized operations in simulations and data transformations.<br/>
+                    I used <b>matplotlib</b> and <b>seaborn</b> to create clear, publication-quality visualizations—leveraging
+                     seaborn for statistical plotting and matplotlib for customizing figure layouts and annotations.<br/>
+                     I used <b>NiPy</b> for neuroimaging data analysis, <b>scikit-learn</b> for building and evaluating machine learning 
+                     models, and <b>statsmodels</b> for conducting statistical tests and regression analyses with interpretable outputs.<p>
+              </div>
+            </div>
+        
+            <!-- R -->
+            <div class="logo-col large-logo r-col">
+              <div class="logo-hover-wrapper">
+                <img src="images/R_logo.png" class="logo-img" alt="R">
+              </div>
+              <div class="logo-text">
+                <h4>R</h4>
+                <p>
+                  In <b>R</b>, I’ve used <b>ggplot2</b> and <b>Plotly</b> for creating high-quality static and interactive data visualizations. <br/>
+                  I’ve also worked with <b>tidyverse</b> and <b>dplyr/plyr</b> for efficient data wrangling, cleaning, and reshaping in both behavioral and neuroimaging datasets.<br/>
+                  Check out my use of the <b>ffanalytics</b> package below in my projects section for how I optimized my draft strategy for fantasy football too!
+                </p>
+              </div>
+            </div>
+          </div>
+        
+          <!-- Bottom Row: MATLAB, Bash, Vizard -->
+          <div class="logo-sub-row bottom-row">
+            <!-- MATLAB -->
+            <div class="logo-col small-logo">
+              <div class="logo-hover-wrapper">
+                <img src="images/matlab_logo2.png" class="logo-img" alt="MATLAB">
+              </div>
+              <div class="logo-text">
+                <h4>MATLAB</h4>
+                <p>
+                  I’ve used <b>MATLAB</b> primarily for neuroimaging workflows, including seed-to-voxel and ROI-to-ROI connectivity analyses through the <b>CONN</b> toolbox.
+                  I prefer to use open-source software when possible, and thus most of my work has been with <b>Python</b>.
+                </p>
+              </div>
+            </div>
+        
+            <!-- Bash -->
+            <div class="logo-col small-logo">
+              <div class="logo-hover-wrapper">
+                <img src="images/bash_logo2.png" class="logo-img" alt="BASH">
+              </div>
+              <div class="logo-text">
+                <h4>BASH</h4>
+                <p>
+                  I use <b>Bash</b> scripting to automate repetitive tasks, manage file systems, and run neuroimaging pipelines like <b>fMRIPrep</b>.
+                   I’ve also created interactive command-line prompts to make my scripts more user-friendly for non-technical collaborators—for example,
+                    tools for scheduling visit reminders. <br/>
+                  Additionally, I’ve written batch job scripts that run on Boston University’s Shared Computing Cluster using the <b>Sun Grid Engine</b>.
+                   These scripts can request specific resources such as high-memory nodes, multiple CPUs, designated queues, or specific node architectures.
+                    This approach allows me to submit and run many jobs in parallel, significantly speeding up analysis workflows.
+                </p>
+              </div>
+            </div>
+        
+            <!-- Vizard -->
+            <div class="logo-col small-logo">
+              <div class="logo-hover-wrapper">
+                <img src="images/vizard_logo2.png" class="logo-img" alt="Vizard">
+              </div>
+              <div class="logo-text">
+                <h4>Vizard</h4>
+                <p>A comprehensive, <b>Python</b> based VR development platform, I've used <b>Vizard</b> to program experimental tasks, such as the open-field foraging task
+                I used in my dissertation work.
+                </p>
+              </div>
+            </div>
+          </div>
+        
+        </div>
+        
+
+        
+      </div>
+      
+    
+      <!-- Skill Box 2 -->
+      <div class="col-md-4 skillBox text-center">
+        <h3>Neuroimaging</h3>
+        <div class="logo-row">
+
+          <!-- Top Row: Python + R -->
+          <div class="logo-sub-row top-row">
+            <!-- Python -->
+            <div class="logo-col large-logo python-col">
+              <div class="logo-hover-wrapper">
+                <img src="images/fsl_logo.webp" class="logo-img" alt="FSL">
+              </div>
+              <div class="logo-text">
+                <h4>FSL</h4>
+                <p>
+                  I’ve used <b>FSL</b> for preprocessing and analyzing fMRI data, including motion correction, spatial smoothing, and statistical modeling using <b>FEAT</b>.<br/>
+                  Most of my use of <b>FSL</b> was earlier in my career, before shifting to <p>Python</p> and <b>fMRIPrep</b> for most of my neuroimaging analyses, and I now mostly use it for visualization purposes.
+                </p>
+              </div>
+            </div>
+        
+            <!-- R -->
+            <div class="logo-col large-logo r-col">
+              <div class="logo-hover-wrapper">
+                <img src="images/freesurfer_logo2.png" class="logo-img" alt="Freesurfer">
+              </div>
+              <div class="logo-text">
+                <h4>FreeSurfer</h4>
+                <p>
+                  <b>FreeSurfer</b> was my go-to for structural MRI analysis, including cortical reconstruction, volumetric segmentation, and surface-based alignment. 
+                I used <b>FreeSurfer</b> for surface reconstruction of my personal MRI—see my 3D printed brain project below!<br/>
+                <b>fMRIPrep</b> takes care of a lot of what I had to use <b>FreeSurfer</b> for at the beginning of my career and I now mostly use it for visualization purposes.
+                </p>
+              </div>
+            </div>
+          </div>
+        
+          <!-- Bottom Row: MATLAB, Bash, Vizard -->
+          <div class="logo-sub-row bottom-row">
+            <!-- MATLAB -->
+            <div class="logo-col small-logo">
+              <div class="logo-hover-wrapper">
+                <img src="images/itksnap_logo2.png" class="logo-img" alt="ITK-SNAP">
+              </div>
+              <div class="logo-text">
+                <h4>ITK-SNAP</h4>
+                <p><b>ITK-SNAP</b> is a free, open-source, multi-platform software application used to segment structures in 3D and 4D biomedical image. I've used it
+                  primarily to manually segment subfields of the hippocampus.
+                </p>
+              </div>
+            </div>
+        
+            <!-- Bash -->
+            <div class="logo-col small-logo">
+              <div class="logo-hover-wrapper">
+                <img src="images/BIDS_logo2.jpg" class="logo-img" alt="BIDS">
+              </div>
+              <div class="logo-text">
+                <h4>BIDS | fMRIPrep</h4>
+                <p><b>BIDS</b> stands for the Brain Imaging Data Structure, a standarized format for the organization and description of neuroimaging and behavioral data.
+                 By using a standardized naming convention, data can be easily shared and understood by other researchers.<br/><br/>
+                 <b>fMRIPrep</b> is a functional magnetic resonance imaging (fMRI) data preprocessing pipeline that is designed to provide an easily accessible,
+                  interface that is robust to variations in scan acquisition protocols.
+                   It performs basic processing steps (coregistration, normalization, unwarping, noise component extraction, segmentation, skull-stripping, etc.)
+                    providing outputs that can be easily submitted to a variety of group level analyses,
+                     including task-based or resting-state fMRI, graph theory measures, and surface or volume-based statistics.
+                     The <b>fMRIPrep</b> pipeline uses a combination of tools from well-known software packages, including <b>FSL</b>, <b>ANTs</b>, <b>FreeSurfer</b> and <b>AFNI</b>.
+                      This pipeline was designed to provide the best software implementation for each state of preprocessing.
+                </p> 
+              </div>
+            </div>
+        
+            <!-- Vizard -->
+            <div class="logo-col small-logo">
+              <div class="logo-hover-wrapper">
+                <img src="images/CONN_logo2.jpg" class="logo-img" alt="CONN">
+              </div>
+              <div class="logo-text">
+                <h4>CONN</h4>
+                <p>
+                  A versatile toolbox used within <b>MATLAB</b> and <b>SPM</b> for performing seed-to-voxel and ROI-to-ROI connectivity analyses
+                   as part of resting-state and task-based fMRI workflows.
+                </p>
+              </div>
+            </div>
+          </div>
+        
+        </div>
+      </div>
+    
+      <!-- Skill Box 3 -->
+      <div class="col-md-4 skillBox text-center">
+        <h3>Data Collection | Design</h3>
+        <div class="logo-row">
+
+          <!-- Top Row: Qualtrics and REDCap -->
+          <div class="logo-sub-row top-row">
+            <!-- Qualtrics -->
+            <div class="logo-col large-logo python-col">
+              <div class="logo-hover-wrapper">
+                <img src="images/qualtrics_logo.webp" class="logo-img" alt="Qualtrics">
+              </div>
+              <div class="logo-text">
+                <h4>Qualtrics</h4>
+                <p>
+                  <b>Qualtrics</b> is a user-friendly, feature-rich survey platform that I’ve used to design data collection tools, event RSVPs, and feedback forms
+                   with logic branching and dynamic question display.
+                </p>                
+              </div>
+            </div>
+        
+            <!-- REDCap -->
+            <div class="logo-col large-logo r-col">
+              <div class="logo-hover-wrapper">
+                <img src="images/redcap_logo.jpg" class="logo-img" alt="REDCap">
+              </div>
+              <div class="logo-text">
+                <h4>REDCap</h4>
+                <p><b>REDCap</b> is a secure web application for building and managing online surveys and databases. I've used it to store participant data and survey responses.
+                You can use branching logic to display questions based on previous responses, and calculated fields for real-time scoring of behavioral instruments. It is 
+              HIPAA compliant as well for storing identifiable information. It also allows us to enable e-consent for virtual participant visits.</p>
+              </div>
+            </div>
+          </div>
+        
+          <!-- Bottom Row: MATLAB, Bash, Vizard -->
+          <div class="logo-sub-row bottom-row">
+            <!-- MATLAB -->
+            <div class="logo-col small-logo">
+              <div class="logo-hover-wrapper">
+                <img src="images/canva_logo.svg" class="logo-img" alt="Canva">
+              </div>
+              <div class="logo-text">
+                <h4>Canva</h4>
+                <p>I use <b>Canva</b> for quick and collaborative visual design tasks—creating posters, infographics, and social media graphics for academic and professional communication.</p>
+              </div>
+            </div>
+        
+            <!-- Bash -->
+            <div class="logo-col small-logo">
+              <div class="logo-hover-wrapper">
+                <img src="images/illustrator_logo.png" class="logo-img" alt="Illustrator">
+              </div>
+              <div class="logo-text">
+                <h4>Adobe Illustrator</h4>
+                <p>
+                  Professionally, I’ve most often used <b>Illustrator</b> to refine and enhance figures for academic papers and presentations. 
+                  On the personal side, I’ve also used it to design a photo collage—carefully aligning and spacing each image, which turned out
+                   to be more challenging (and satisfying) than expected!
+                </p>
+              </div>
+            </div>
+        
+            <!-- Vizard -->
+            <div class="logo-col small-logo">
+              <div class="logo-hover-wrapper">
+                <img src="images/photoshop_logo.png" class="logo-img" alt="Photoshop">
+              </div>
+              <div class="logo-text">
+                <h4>Adobe Photoshop</h4>
+                <p>
+                  I’ve primarily used <b>Photoshop</b> for editing and isolating visual elements—most often to remove backgrounds
+                   and create transparent assets, which has proven surprisingly useful across research and design projects.
+                </p>              
+              </div>
+            </div>
+          </div>
+        
+        </div>
+      </div>
+    
+    </div>
+  </div>
+    
+    <!--<div class="row">
+      <div class="col-sm-6">
+        <h2>Programming Skills</h2>
+        <p class="mrgBtm20"> Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum. </p>
+      </div>
+      <div class="col-sm-6"> <br/>
+        <br/>
+        <br/>
+        <div class="row">
+          <div class="col-md-2 skilltitle"><b>HTML5</b></div>
+          <div class="col-md-10">
+            <div class="progress">
+              <div class="progress-bar" role="progressbar" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100" style="width: 90%;"> <span class="sr-only">90% Complete</span> </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-2 skilltitle"><b>JavaScript</b></div>
+          <div class="col-md-10">
+            <div class="progress">
+              <div class="progress-bar" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" style="width: 80%;"> <span class="sr-only">80% Complete</span> </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-2 skilltitle"><b>Angular</b></div>
+          <div class="col-md-10">
+            <div class="progress">
+              <div class="progress-bar" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 75%;"> <span class="sr-only">75% Complete</span> </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-2 skilltitle"><b>Knockout</b></div>
+          <div class="col-md-10">
+            <div class="progress">
+              <div class="progress-bar" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 75%;"> <span class="sr-only">75% Complete</span> </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>-->
+  </div>
+</section>
+
+<!--Experience-->
+<section id="experience" class="secPad">
+<div class="container">
+<div class="heading"> 
+  <!-- Heading -->
+  <h2>Experience</h2>
+  <br/>
+  <!--<h4>13 Years of Experience!</h4>-->
+  <p>I have been in the field of neuroscience for more than 13 years now. 
+     I started as a research assistant under Dr. Soojin Park at Johns Hopkins University
+     investigating scene perception in humans using fMRI in the Visual Cognitive Neuroscience Lab. 
+     This was my first experience helping design an experiment, conducting literature searches, and analyzing and collecting data. 
+     <br/><br/>My next position was as a Research Study Technician and Lab Manager, helping Dr. Karin Schon get her newly founded 
+     Brain Plasticity & Neuroimaging Lab up and running at Boston University. Here we sought to understand how exercise and physical
+     fitness impacted brain health in younger and older adults. I learned to conduct fitness testing to estimate VO2max, a measure
+     of aerobic fitness, became an expert in manual segmentation of hippocampal subfields (brain regions important for learning and memory
+     and impacted by exercise and aging) on structural MRIs, and helped build and maintain data respositories. <br/><br/>
+     I did my doctoral research with Dr. Chantal Stern, a pioneer in the field of fMRI. My dissertation work focused on the neural substrates 
+    of egocentric (self-centered) and allocentric (world-centered) spatial navigation. Here, I developed a novel experiment using a Python based
+    software package, led all aspects of the study from design to data collection to model-based analyses and dissemination of results. During this
+    time I hosted a webinar and created training materials on hippocampal subfield tracing, and was also invited as one of 32 experts to a retreat 
+    at the Universidad de Castilla-La Mancha dedicated towards harominization of segmentation protocols. <br/><br/>
+    Upon the successful defense of my dissertation, I was offered a position as a Postdoctoral Associate in the Brain Plasticity & Neuroimaging Lab, where
+    I had worked previously as a tech and lab manager. The lab was just beginning two major R01 studies and I was able to give my expertise and provide
+    lab-wide operational support, correct legacy errors from pre-study preparations, and develop data collection and analysis pipelines. Additionally, 
+    with no prior experience in event planning or promotion, I organized and co-led a public Brain Health Forum, overseeing logistics, AV setup, catering,
+    and community outreach. I served as a featured speaker and engaged ~35 attendees from 70 RSVPs. Through of all of this we were able to hit multiple
+    project milestones under tight time and resource constraints<br/><br/>
+    Over my last four positions I have had to wear MANY different hats. I have taught myself to program to build experimental tasks and perform model-based analyses,
+    the logistics involved with planning, promotion, and hosting an event, and the importance of teamwork and leadership. All of the obstacles and problems I have faced
+    have made me into a better, stronger scientist and person and I can't wait for my next challenge!
+  </p>
+</div>
+
+<div class="row">
+	<div class="col-md-3 col-sm-6">
+		<div class="exp-wrapper">
+			<img src="images/parklab.png" width="90" alt="Name">
+			<h3>Visual Cognitive Neuroscience Lab</h3>
+			<p>Research Assistant<br/>
+			<em> 2012-2013 </em>
+			</p>
+		</div>
+	</div>
+	<div class="col-md-3 col-sm-6">
+		<div class="exp-wrapper">
+			<img src="images/BPN_Lab_Logo.png" width="90" alt="Name">
+			<h3>Brain Plasticity & Neuroimaging Lab</h3>
+			<p>Research Study Technician & Lab Manager<br/>
+			<em> 2013-2017 </em></p>
+		</div>
+	</div>
+	<div class="col-md-3 col-sm-6">
+		<div class="exp-wrapper">
+			<img src="images/brain_gif.gif" width="90" alt="Name">
+			<h3>Cognitive Neuroimaging Lab</h3>
+			<p>PhD Candidate<br/>
+			<em> 2017-2024 </em></p>
+		</div>
+	</div>
+	<div class="col-md-3 col-sm-6">
+		<div class="exp-wrapper">
+			<img src="images/BPN_Lab_Logo.png" width="90" alt="Name">
+			<h3>Brain Plasticity & Neuroimaging Lab</h3>
+			<p>Postdoctoral Associate<br/>
+			<em> 2024-present </em></p>
+		</div>
+	</div>
+	 
+</div>		
+</section>
+
+<!--Portfolio-->
+<section id="projects" class="page-section section appear clearfix secPad">
+  <div class="container">
+    <div class="heading"> 
+      <!-- Heading -->
+      <h2>Projects</h2>
+      <p>See below for some of the projects I've worked on over the years.</p>
+    </div>
+    <div class="row">
+      <nav id="filter" class="col-md-12">
+        <ul>
+          <li><a href="#" class="current btn-theme btn-small" data-filter="*">All</a></li>
+          <li><a href="#" class="btn-theme btn-small" data-filter=".programming">Programming</a></li>
+          <li><a href="#" class="btn-theme btn-small" data-filter=".interests">Interests</a></li>
+        </ul>
+      </nav>
+      <div class="col-md-12">
+        <div class="row">
+          <div class="portfolio-items isotopeWrapper clearfix" id="3">
+            <article class="col-sm-4 isotopeItem programming">
+              <div class="portfolio-item"> <img src="images/reminders_clipart.jpeg" alt="" />
+                <div class="portfolio-desc align-center">
+                  <div class="folio-info"> <a href="images/reminders_clipart.jpeg" class="fancybox">
+                    <a href="reminders.html">
+                    <h5>Twilio Automated Reminders</h5>
+                    <i class="fa fa-plus-square-o fa-2x"></i></a> </div>
+                </div>
+              </div>
+            </article>
+            <article class="col-sm-4 isotopeItem programming">
+              <div class="portfolio-item"> <img src="images/text_clipart.jpeg" alt="" />
+                <div class="portfolio-desc align-center">
+                  <div class="folio-info"> <a href="images/text_clipart.jpeg" class="fancybox">
+                    <a href="flask_app.html">
+                    <h5>Twilio SMS Routing</h5>
+                    <i class="fa fa-plus-square-o fa-2x"></i></a> </div>
+                </div>
+              </div>
+            </article>
+            <article class="col-sm-4 isotopeItem programming">
+              <div class="portfolio-item"> <img src="images/hr_clipart.jpeg" alt="" />
+                <div class="portfolio-desc align-center">
+                  <div class="folio-info"> <a href="images/hr_clipart.jpeg" class="fancybox">
+                    <a href="vo2max.html">
+                    <h5>VO2max Estimator</h5>
+                    <i class="fa fa-plus-square-o fa-2x"></i></a> </div>
+                </div>
+              </div>
+            </article>
+            <article class="col-sm-4 isotopeItem programming">
+              <div class="portfolio-item"> <img src="images/vaccine_clipart.jpeg" alt="" />
+                <div class="portfolio-desc align-center">
+                  <div class="folio-info"> <a href="images/vaccine_clipart.jpeg" class="fancybox">
+                    <a href="vaccine.html">
+                    <h5>COVID-19 Vaccine Finder</h5>
+                    <i class="fa fa-plus-square-o fa-2x"></i></a> </div>
+                </div>
+              </div>
+            </article>
+            <article class="col-sm-4 isotopeItem interests">
+              <div class="portfolio-item"> <img src="images/brain_clipart2.jpeg" alt="" />
+                <div class="portfolio-desc align-center">
+                  <div class="folio-info"> <a href="images/brain_clipart2.jpeg" class="fancybox">
+			                  <a href="3dbrain.html">
+                    		<h5>3D-Printed Brain</h5>
+                    		<i class="fa fa-plus-square-o fa-2x"></i></a> </div>
+                </div>
+              </div>
+            </article>
+            <article class="col-sm-4 isotopeItem interests">
+              <div class="portfolio-item"> <img src="images/mixer_clipart.jpeg" alt="" />
+                <div class="portfolio-desc align-center">
+                  <div class="folio-info"> <a href="images/mixer_clipart.jpeg" class="fancybox">
+                    <a href="gf_food.html">
+                    <h5>Gluten-Free Baking</h5>
+                    <i class="fa fa-plus-square-o fa-2x"></i></a> </div>
+                </div>
+              </div>
+            </article>
+            <article class="col-sm-4 isotopeItem interests">
+              <div class="portfolio-item"> <img src="images/ff_trophy.jpeg" alt="" />
+                <div class="portfolio-desc align-center">
+                  <div class="folio-info"> <a href="images/mixer_clipart.jpeg" class="fancybox">
+                    <a href="fantasy_football.html">
+                    <h5>Fantasy Football Draft Tool</h5>
+                    <i class="fa fa-plus-square-o fa-2x"></i></a> </div>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!--Contact -->
+<section id="contactMe" class="page-section secPad">
+  <div class="container">
+    <div class="row">
+      <div class="heading"> 
+        <!-- Heading -->
+        <h2>Let's Keep In Touch!</h2>
+        <p>Thank you for visiting out my profile. If you would like to get into contact with me, please fill out the form below.</p>
+      </div>
+    </div>
+    <div class="row mrgn30">
+      <form method="post" action="" id="contactfrm" role="form">
+        <div class="col-sm-4">
+          <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" class="form-control" name="name" id="name" placeholder="Enter name" title="Please enter your name (at least 2 characters)">
+          </div>
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" class="form-control" name="email" id="email" placeholder="Enter email" title="Please enter a valid email address">
+          </div>
+        </div>
+        <div class="col-sm-8">
+          <div class="form-group">
+            <label for="comments">Comments</label>
+            <textarea name="comment" class="form-control" id="comments" cols="3" rows="5" placeholder="Enter your message…" title="Please enter your message (at least 10 characters)"></textarea>
+          </div>
+          <button name="submit" type="submit" class="btn btn-lg btn-primary" id="submit">Submit</button>
+          <div class="result"></div>
+        </div>
+      </form>
+      <!--div class="col-sm-4">
+        <h4>Address:</h4>
+        <address>
+        Steve Smith<br>
+        134 Stilla. Tae., 414515<br>
+        Leorislon, SA 02434-34534 USA <br>
+        </address>
+        <h4>Phone:</h4>
+        <address>
+        12345-49589-2<br>
+        </address>
+      </div>-->
+    </div>
+  </div>
+  <!--/.container--> 
 </section>
 
 <!--/.page-section-->
 <footer class="copyright">
   <div class="container">
     <div class="row">
-      <div class="col-md-6">
-      </div>
+      <!--<div class="col-md-6">
+        <div class="social pull-left"> <a href="#"><i class="fa fa-twitter"></i></a> <a href="#"><i class="fa fa-facebook"></i></a> <a href="#"><i class="fa fa-dribbble"></i></a> <a href="#"><i class="fa fa-flickr"></i></a> <a href="#"><i class="fa fa-github"></i></a> </div>
+      </div>-->
       <div class="col-md-6"> <span class="pull-right">Copyright 2014 | All Rights Reserved  -- Template by <a href="http://webThemez.com">WebThemez.com</a></span> </div>
     </div>
     <!-- / .row --> 
   </div>
 </footer>
-<a href="#top" class="topHome"><i class="fa fa-chevron-up fa-2x"></i></a> 
+<a href="#top" class="topHome btn btn-dark"><i class="fa fa-chevron-up fa-2x"></i></a> 
 
 <!--[if lte IE 8]><script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script><![endif]--> 
 <script src="js/modernizr-latest.js"></script> 
@@ -131,5 +768,7 @@
 <script src="js/jquery.diagram.js"></script> 
 <script src="js/custom.js" type="text/javascript"></script> 
 <script src="js/owl-carousel/owl.carousel.js"></script>
+<script src="js/logo-hover.js"></script>
+
 </body>
 </html>
